@@ -1,0 +1,60 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RTE éCO2mix",
+        "description": "Choisissez la France (inclut le taux de CO2) ou une région. Ajoutez l'intégration une nouvelle fois pour un autre périmètre.",
+        "data": {
+          "perimeter": "Périmètre"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de joindre l'API éCO2mix. Réessayez plus tard."
+    },
+    "abort": {
+      "already_configured": "Ce périmètre est déjà configuré."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Seuil bas carbone",
+        "description": "Le capteur binaire « électricité bas carbone » est actif quand le taux de CO2 de l'électricité française est inférieur ou égal à cette valeur.",
+        "data": {
+          "co2_threshold": "Seuil de taux de CO2"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "low_carbon": { "name": "Électricité bas carbone" }
+    },
+    "sensor": {
+      "consumption": { "name": "Consommation" },
+      "nuclear": { "name": "Nucléaire" },
+      "wind": { "name": "Éolien" },
+      "solar": { "name": "Solaire" },
+      "hydro": { "name": "Hydraulique" },
+      "bioenergy": { "name": "Bioénergies" },
+      "pumped_storage": { "name": "Pompage" },
+      "physical_exchanges": { "name": "Échanges physiques" },
+      "data_time": { "name": "Horodatage des données" },
+      "co2_intensity": { "name": "Taux de CO2" },
+      "co2_intensity_percentile": { "name": "Centile du taux de CO2 sur 24 h" },
+      "gas": { "name": "Gaz" },
+      "coal": { "name": "Charbon" },
+      "oil": { "name": "Fioul" },
+      "thermal": { "name": "Thermique fossile" },
+      "low_carbon_share": { "name": "Part bas carbone" },
+      "renewable_share": { "name": "Part renouvelable" },
+      "coverage_nuclear": { "name": "Consommation couverte par le nucléaire" },
+      "coverage_wind": { "name": "Consommation couverte par l'éolien" },
+      "coverage_solar": { "name": "Consommation couverte par le solaire" },
+      "coverage_hydro": { "name": "Consommation couverte par l'hydraulique" },
+      "coverage_bioenergy": { "name": "Consommation couverte par les bioénergies" },
+      "coverage_thermal": { "name": "Consommation couverte par le thermique fossile" }
+    }
+  }
+}

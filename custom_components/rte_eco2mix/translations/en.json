@@ -1,0 +1,60 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RTE éCO2mix",
+        "description": "Choose France (includes CO2 intensity) or a region. Add the integration again for another perimeter.",
+        "data": {
+          "perimeter": "Perimeter"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach the éCO2mix API. Try again later."
+    },
+    "abort": {
+      "already_configured": "This perimeter is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Low-carbon threshold",
+        "description": "The low-carbon binary sensor is on when the CO2 intensity of French electricity is at or below this value.",
+        "data": {
+          "co2_threshold": "CO2 intensity threshold"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "low_carbon": { "name": "Low-carbon electricity" }
+    },
+    "sensor": {
+      "consumption": { "name": "Consumption" },
+      "nuclear": { "name": "Nuclear" },
+      "wind": { "name": "Wind" },
+      "solar": { "name": "Solar" },
+      "hydro": { "name": "Hydro" },
+      "bioenergy": { "name": "Bioenergy" },
+      "pumped_storage": { "name": "Pumped storage" },
+      "physical_exchanges": { "name": "Physical exchanges" },
+      "data_time": { "name": "Data time" },
+      "co2_intensity": { "name": "CO2 intensity" },
+      "co2_intensity_percentile": { "name": "CO2 intensity 24 h percentile" },
+      "gas": { "name": "Gas" },
+      "coal": { "name": "Coal" },
+      "oil": { "name": "Oil" },
+      "thermal": { "name": "Fossil thermal" },
+      "low_carbon_share": { "name": "Low-carbon share" },
+      "renewable_share": { "name": "Renewable share" },
+      "coverage_nuclear": { "name": "Consumption covered by nuclear" },
+      "coverage_wind": { "name": "Consumption covered by wind" },
+      "coverage_solar": { "name": "Consumption covered by solar" },
+      "coverage_hydro": { "name": "Consumption covered by hydro" },
+      "coverage_bioenergy": { "name": "Consumption covered by bioenergy" },
+      "coverage_thermal": { "name": "Consumption covered by fossil thermal" }
+    }
+  }
+}
