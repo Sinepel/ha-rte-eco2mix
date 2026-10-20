@@ -19,6 +19,8 @@ Its main purpose is to help you **run appliances when electricity is low-carbon*
 - Production by source (nuclear, wind, solar, hydro, bioenergy, gas, coal, oil or fossil thermal for regions), consumption, physical exchanges
 - Low-carbon and renewable shares of production
 - Regions: share of the regional consumption covered by each source (disabled by default)
+- RTE consumption peak forecasts for today and tomorrow (France)
+- **Typical cleanest hour**: the hour with the lowest average CO2 intensity over the last 7 days, and when it next occurs (France)
 - No API key, no account, updated every 15 minutes
 
 ## Installation
@@ -58,9 +60,13 @@ Options (France only): the CO2 intensity threshold of the low-carbon binary sens
 | Pumped storage *(disabled by default)* | ✓ | ✓ | MW |
 | Low-carbon share, renewable share | ✓ | ✓ | % |
 | Consumption covered by each source *(disabled by default)* | | ✓ | % |
+| Consumption peak forecast today / tomorrow (attribute `time`) | ✓ | | MW |
+| Typical cleanest hour (attributes `typical_co2_intensity`, `hourly_profile`) | ✓ | | timestamp |
 | Data time (diagnostic) | ✓ | ✓ | timestamp |
 
 RTE publishes data with a delay of about 30 minutes; *Data time* shows the 15-minute slot currently displayed.
+
+RTE does not publish CO2 forecasts. *Typical cleanest hour* is therefore a **trend, not a forecast**: it averages the CO2 intensity of each hour of the day over the last 7 days (Europe/Paris time). In France it usually falls around midday (solar) or during the night. The real-time sensors remain the reference to decide at the last moment.
 
 ## Automation example
 
@@ -90,12 +96,14 @@ automation:
 
 A simpler alternative is to trigger on `binary_sensor.eco2mix_france_low_carbon_electricity` turning `on`.
 
+You can also plan ahead, for example to set a delayed start: the template `{{ states('sensor.eco2mix_france_typical_cleanest_hour') | as_datetime | as_local }}` gives the start of the next typically cleanest hour.
+
 ## Data source
 
 Data © [RTE](https://www.rte-france.com/), [éCO2mix](https://odre.opendatasoft.com/explore/dataset/eco2mix-national-tr/) real-time datasets published on the ODRÉ open data platform under the [Licence Ouverte v2.0 (Etalab)](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
 This project is not affiliated with or endorsed by RTE.
 
-The API allows 50,000 calls per month per dataset; this integration makes one call every 15 minutes per perimeter.
+The API allows 50,000 calls per month per dataset. This integration makes one call every 15 minutes per perimeter, plus three calls per hour for the France forecasts: about 5,000 calls per month for France and 3,000 per region.
 
 ---
 
@@ -103,7 +111,7 @@ The API allows 50,000 calls per month per dataset; this integration makes one ca
 
 Données en temps réel de l'électricité française (RTE éCO2mix) : **taux de CO2**, production par filière, consommation et échanges, pour **la France ou l'une des 12 régions métropolitaines continentales**.
 
-Objectif principal : **lancer vos appareils quand l'électricité est bas carbone**. Le capteur binaire « Électricité bas carbone » (seuil réglable) et le « Centile du taux de CO2 sur 24 h » (0 % = moment le plus propre des dernières 24 h) servent de déclencheurs pour vos automatisations : lave-linge, lave-vaisselle, recharge de voiture…
+Objectif principal : **lancer vos appareils quand l'électricité est bas carbone**. S'y ajoutent les prévisions RTE du pic de consommation (aujourd'hui et demain) et l'« heure typiquement la plus propre » (moyenne horaire des 7 derniers jours : une tendance, pas une prévision). Le capteur binaire « Électricité bas carbone » (seuil réglable) et le « Centile du taux de CO2 sur 24 h » (0 % = moment le plus propre des dernières 24 h) servent de déclencheurs pour vos automatisations : lave-linge, lave-vaisselle, recharge de voiture…
 
 Installation : HACS → ⋮ → Dépôts personnalisés → `https://github.com/Sinepel/ha-rte-eco2mix` (Intégration), puis **Paramètres → Appareils et services → Ajouter une intégration → RTE éCO2mix**. Ajoutez la France pour le taux de CO2, et votre région si vous le souhaitez. Aucune clé d'API, mise à jour toutes les 15 minutes.
 

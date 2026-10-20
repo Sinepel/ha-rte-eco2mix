@@ -29,32 +29,89 @@
   },
   "entity": {
     "binary_sensor": {
-      "low_carbon": { "name": "Électricité bas carbone" }
+      "low_carbon": {
+        "name": "Électricité bas carbone"
+      }
     },
     "sensor": {
-      "consumption": { "name": "Consommation" },
-      "nuclear": { "name": "Nucléaire" },
-      "wind": { "name": "Éolien" },
-      "solar": { "name": "Solaire" },
-      "hydro": { "name": "Hydraulique" },
-      "bioenergy": { "name": "Bioénergies" },
-      "pumped_storage": { "name": "Pompage" },
-      "physical_exchanges": { "name": "Échanges physiques" },
-      "data_time": { "name": "Horodatage des données" },
-      "co2_intensity": { "name": "Taux de CO2" },
-      "co2_intensity_percentile": { "name": "Centile du taux de CO2 sur 24 h" },
-      "gas": { "name": "Gaz" },
-      "coal": { "name": "Charbon" },
-      "oil": { "name": "Fioul" },
-      "thermal": { "name": "Thermique fossile" },
-      "low_carbon_share": { "name": "Part bas carbone" },
-      "renewable_share": { "name": "Part renouvelable" },
-      "coverage_nuclear": { "name": "Consommation couverte par le nucléaire" },
-      "coverage_wind": { "name": "Consommation couverte par l'éolien" },
-      "coverage_solar": { "name": "Consommation couverte par le solaire" },
-      "coverage_hydro": { "name": "Consommation couverte par l'hydraulique" },
-      "coverage_bioenergy": { "name": "Consommation couverte par les bioénergies" },
-      "coverage_thermal": { "name": "Consommation couverte par le thermique fossile" }
+      "consumption": {
+        "name": "Consommation"
+      },
+      "nuclear": {
+        "name": "Nucléaire"
+      },
+      "wind": {
+        "name": "Éolien"
+      },
+      "solar": {
+        "name": "Solaire"
+      },
+      "hydro": {
+        "name": "Hydraulique"
+      },
+      "bioenergy": {
+        "name": "Bioénergies"
+      },
+      "pumped_storage": {
+        "name": "Pompage"
+      },
+      "physical_exchanges": {
+        "name": "Échanges physiques"
+      },
+      "data_time": {
+        "name": "Horodatage des données"
+      },
+      "co2_intensity": {
+        "name": "Taux de CO2"
+      },
+      "co2_intensity_percentile": {
+        "name": "Centile du taux de CO2 sur 24 h"
+      },
+      "gas": {
+        "name": "Gaz"
+      },
+      "coal": {
+        "name": "Charbon"
+      },
+      "oil": {
+        "name": "Fioul"
+      },
+      "thermal": {
+        "name": "Thermique fossile"
+      },
+      "low_carbon_share": {
+        "name": "Part bas carbone"
+      },
+      "renewable_share": {
+        "name": "Part renouvelable"
+      },
+      "coverage_nuclear": {
+        "name": "Consommation couverte par le nucléaire"
+      },
+      "coverage_wind": {
+        "name": "Consommation couverte par l'éolien"
+      },
+      "coverage_solar": {
+        "name": "Consommation couverte par le solaire"
+      },
+      "coverage_hydro": {
+        "name": "Consommation couverte par l'hydraulique"
+      },
+      "coverage_bioenergy": {
+        "name": "Consommation couverte par les bioénergies"
+      },
+      "coverage_thermal": {
+        "name": "Consommation couverte par le thermique fossile"
+      },
+      "consumption_peak_today": {
+        "name": "Pic de consommation prévu aujourd'hui"
+      },
+      "consumption_peak_tomorrow": {
+        "name": "Pic de consommation prévu demain"
+      },
+      "typical_cleanest_hour": {
+        "name": "Heure typiquement la plus propre"
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, time, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -16,10 +16,15 @@ from homeassistant.components.sensor import (
 from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfPower
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
-from .api import Eco2mixData
+from .api import PARIS, Eco2mixData, Eco2mixForecast, Eco2mixPeak
 from .const import PERIMETER_FRANCE
-from .coordinator import Eco2mixConfigEntry
+from .coordinator import (
+    Eco2mixConfigEntry,
+    Eco2mixCoordinator,
+    Eco2mixForecastCoordinator,
+)
 from .entity import Eco2mixEntity
 
 PARALLEL_UPDATES = 0
@@ -61,6 +66,21 @@ def co2_percentile(data: Eco2mixData) -> float | None:
         return None
     cleaner = sum(1 for v in data.co2_history if v < current)
     return round(100 * cleaner / len(data.co2_history))
+
+
+def next_typical_cleanest_hour(
+    profile: dict[int, float], now: datetime
+) -> datetime | None:
+    """Return the start of the next occurrence of the typically cleanest hour.
+
+    The current hour counts as "next" while it is still running.
+    """
+    if not profile:
+        return None
+    best = min(profile, key=lambda hour: profile[hour])
+    local = now.astimezone(PARIS)
+    day = local.date() if best >= local.hour else local.date() + timedelta(days=1)
+    return datetime.combine(day, time(best), tzinfo=PARIS)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -163,25 +183,72 @@ REGIONAL = (
 )
 
 
+@dataclass(frozen=True, kw_only=True)
+class Eco2mixForecastSensorDescription(SensorEntityDescription):
+    """Describe an éCO2mix forecast sensor."""
+
+    value_fn: Callable[[Eco2mixForecast], float | datetime | None]
+    attributes_fn: Callable[[Eco2mixForecast], dict[str, Any]] = lambda _: {}
+
+
+def _peak_attributes(peak: Eco2mixPeak | None) -> dict[str, Any]:
+    return {"time": peak.time.isoformat()} if peak else {}
+
+
+def _peak(key: str, attr: str) -> Eco2mixForecastSensorDescription:
+    return Eco2mixForecastSensorDescription(
+        key=key,
+        translation_key=key,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.MEGA_WATT,
+        suggested_display_precision=0,
+        value_fn=lambda f: getattr(f, attr).power if getattr(f, attr) else None,
+        attributes_fn=lambda f: _peak_attributes(getattr(f, attr)),
+    )
+
+
+FORECAST = (
+    _peak("consumption_peak_today", "peak_today"),
+    _peak("consumption_peak_tomorrow", "peak_tomorrow"),
+    Eco2mixForecastSensorDescription(
+        key="typical_cleanest_hour",
+        translation_key="typical_cleanest_hour",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        value_fn=lambda f: next_typical_cleanest_hour(f.co2_profile, dt_util.now()),
+        attributes_fn=lambda f: {
+            "typical_co2_intensity": min(f.co2_profile.values(), default=None),
+            "hourly_profile": f.co2_profile,
+        },
+    ),
+)
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: Eco2mixConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up éCO2mix sensors."""
-    coordinator = entry.runtime_data
+    coordinator = entry.runtime_data.realtime
     specific = NATIONAL if coordinator.perimeter == PERIMETER_FRANCE else REGIONAL
-    async_add_entities(
+    entities: list[SensorEntity] = [
         Eco2mixSensor(coordinator, description) for description in (*COMMON, *specific)
-    )
+    ]
+    if forecast := entry.runtime_data.forecast:
+        entities.extend(
+            Eco2mixForecastSensor(forecast, description) for description in FORECAST
+        )
+    async_add_entities(entities)
 
 
-class Eco2mixSensor(Eco2mixEntity, SensorEntity):
+class Eco2mixSensor(Eco2mixEntity[Eco2mixCoordinator], SensorEntity):
     """An éCO2mix sensor."""
 
     entity_description: Eco2mixSensorDescription
 
-    def __init__(self, coordinator, description: Eco2mixSensorDescription) -> None:
+    def __init__(
+        self, coordinator: Eco2mixCoordinator, description: Eco2mixSensorDescription
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator, description.key)
         self.entity_description = description
@@ -190,3 +257,28 @@ class Eco2mixSensor(Eco2mixEntity, SensorEntity):
     def native_value(self) -> float | datetime | None:
         """Return the sensor value."""
         return self.entity_description.value_fn(self.coordinator.data)
+
+
+class Eco2mixForecastSensor(Eco2mixEntity[Eco2mixForecastCoordinator], SensorEntity):
+    """An éCO2mix forecast sensor (France only)."""
+
+    entity_description: Eco2mixForecastSensorDescription
+
+    def __init__(
+        self,
+        coordinator: Eco2mixForecastCoordinator,
+        description: Eco2mixForecastSensorDescription,
+    ) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, description.key)
+        self.entity_description = description
+
+    @property
+    def native_value(self) -> float | datetime | None:
+        """Return the sensor value."""
+        return self.entity_description.value_fn(self.coordinator.data)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra attributes."""
+        return self.entity_description.attributes_fn(self.coordinator.data)

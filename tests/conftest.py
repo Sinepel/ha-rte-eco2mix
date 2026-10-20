@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from yarl import URL
 
 from custom_components.rte_eco2mix.api import (
     API_URL,
@@ -35,9 +36,25 @@ def auto_enable_custom_integrations(enable_custom_integrations):
 @pytest.fixture
 def mock_api(aioclient_mock: AiohttpClientMocker) -> AiohttpClientMocker:
     """Mock both éCO2mix datasets with real recorded responses."""
+    mock_forecast(aioclient_mock)
     aioclient_mock.get(NATIONAL_URL, json=load_fixture("national.json"))
     aioclient_mock.get(REGIONAL_URL, json=load_fixture("regional_32.json"))
     return aioclient_mock
+
+
+def mock_forecast(aioclient_mock: AiohttpClientMocker) -> None:
+    """Mock forecast queries; they share the national URL, so match on the query.
+
+    Register before the catch-all national mock: the first match wins.
+    """
+    for query, fixture in (
+        ({"order_by": "prevision_j desc"}, "peak_today.json"),
+        ({"order_by": "prevision_j1 desc"}, "peak_tomorrow.json"),
+        ({"group_by": "hour(date_heure) as h"}, "co2_profile.json"),
+    ):
+        aioclient_mock.get(
+            URL(NATIONAL_URL).with_query(query), json=load_fixture(fixture)
+        )
 
 
 @pytest.fixture

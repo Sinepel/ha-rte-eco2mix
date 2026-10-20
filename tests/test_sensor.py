@@ -15,9 +15,12 @@ from pytest_homeassistant_custom_component.common import (
 )
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
-from custom_components.rte_eco2mix.api import Eco2mixData
+from custom_components.rte_eco2mix.api import PARIS, Eco2mixData
 from custom_components.rte_eco2mix.const import SCAN_INTERVAL
-from custom_components.rte_eco2mix.sensor import co2_percentile
+from custom_components.rte_eco2mix.sensor import (
+    co2_percentile,
+    next_typical_cleanest_hour,
+)
 
 from .conftest import NATIONAL_URL, load_fixture
 
@@ -155,3 +158,80 @@ async def test_diagnostics(
     diag = await async_get_config_entry_diagnostics(hass, france_entry)
     assert diag["values"]["taux_co2"] == LATEST_NATIONAL["taux_co2"]
     assert len(diag["co2_history"]) > 0
+
+
+async def test_forecast_sensors(
+    hass: HomeAssistant, mock_api, france_entry: MockConfigEntry
+) -> None:
+    """France exposes consumption peak forecasts and the typical cleanest hour."""
+    await _setup(hass, france_entry)
+
+    peak_today = load_fixture("peak_today.json")["results"][0]
+    state = hass.states.get("sensor.eco2mix_france_consumption_peak_forecast_today")
+    assert float(state.state) == peak_today["prevision_j"]
+    assert state.attributes["time"] == peak_today["date_heure"]
+
+    peak_tomorrow = load_fixture("peak_tomorrow.json")["results"][0]
+    state = hass.states.get("sensor.eco2mix_france_consumption_peak_forecast_tomorrow")
+    assert float(state.state) == peak_tomorrow["prevision_j1"]
+
+    state = hass.states.get("sensor.eco2mix_france_typical_cleanest_hour")
+    profile = {r["h"]: r["co2"] for r in load_fixture("co2_profile.json")["results"]}
+    best = min(profile, key=profile.get)
+    cleanest = datetime.fromisoformat(state.state).astimezone(PARIS)
+    assert cleanest.hour == best
+    assert state.attributes["typical_co2_intensity"] == round(profile[best], 1)
+    assert len(state.attributes["hourly_profile"]) == 24
+
+
+async def test_no_forecast_for_regions(
+    hass: HomeAssistant, mock_api, region_entry: MockConfigEntry
+) -> None:
+    """Regions have no forecast sensors."""
+    await _setup(hass, region_entry)
+    assert (
+        hass.states.get("sensor.eco2mix_hauts_de_france_typical_cleanest_hour") is None
+    )
+
+
+def test_next_typical_cleanest_hour() -> None:
+    """The next occurrence is today if the hour is not over, else tomorrow."""
+    profile = {3: 20.0, 14: 22.0, 20: 45.0}
+    at = datetime(2026, 10, 20, 2, 30, tzinfo=PARIS)
+    assert next_typical_cleanest_hour(profile, at) == datetime(
+        2026, 10, 20, 3, tzinfo=PARIS
+    )
+    at = datetime(2026, 10, 20, 3, 45, tzinfo=PARIS)
+    assert next_typical_cleanest_hour(profile, at) == datetime(
+        2026, 10, 20, 3, tzinfo=PARIS
+    )
+    at = datetime(2026, 10, 20, 4, 0, tzinfo=PARIS)
+    assert next_typical_cleanest_hour(profile, at) == datetime(
+        2026, 10, 21, 3, tzinfo=PARIS
+    )
+    assert next_typical_cleanest_hour({}, at) is None
+
+
+async def test_forecast_missing_fields(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    france_entry: MockConfigEntry,
+) -> None:
+    """Empty or partial forecast answers give unknown sensors, not a failed setup."""
+    # One minimal slot answers every query: no forecast fields, no profile rows.
+    slot = {
+        "date_heure": "2026-10-20T20:45:00+00:00",
+        "consommation": 1,
+        "taux_co2": 20,
+    }
+    aioclient_mock.get(NATIONAL_URL, json={"results": [slot]})
+    await _setup(hass, france_entry)
+    assert france_entry.state is ConfigEntryState.LOADED
+    assert (
+        hass.states.get("sensor.eco2mix_france_consumption_peak_forecast_today").state
+        == "unknown"
+    )
+    assert (
+        hass.states.get("sensor.eco2mix_france_typical_cleanest_hour").state
+        == "unknown"
+    )

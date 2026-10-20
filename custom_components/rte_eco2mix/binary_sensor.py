@@ -22,10 +22,10 @@ async def async_setup_entry(
 ) -> None:
     """Set up the low-carbon binary sensor (France only)."""
     threshold = entry.options.get(CONF_CO2_THRESHOLD, DEFAULT_CO2_THRESHOLD)
-    async_add_entities([Eco2mixLowCarbonSensor(entry.runtime_data, threshold)])
+    async_add_entities([Eco2mixLowCarbonSensor(entry.runtime_data.realtime, threshold)])
 
 
-class Eco2mixLowCarbonSensor(Eco2mixEntity, BinarySensorEntity):
+class Eco2mixLowCarbonSensor(Eco2mixEntity[Eco2mixCoordinator], BinarySensorEntity):
     """On when the national CO2 intensity is at or below the threshold."""
 
     _attr_translation_key = "low_carbon"

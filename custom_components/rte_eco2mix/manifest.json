@@ -1,12 +1,14 @@
 {
   "domain": "rte_eco2mix",
   "name": "RTE éCO2mix",
-  "codeowners": ["@Sinepel"],
+  "codeowners": [
+    "@Sinepel"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/Sinepel/ha-rte-eco2mix",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/Sinepel/ha-rte-eco2mix/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

@@ -3,32 +3,87 @@
     "binary_sensor": {
       "low_carbon": {
         "default": "mdi:leaf-off",
-        "state": { "on": "mdi:leaf" }
+        "state": {
+          "on": "mdi:leaf"
+        }
       }
     },
     "sensor": {
-      "consumption": { "default": "mdi:transmission-tower" },
-      "nuclear": { "default": "mdi:atom" },
-      "wind": { "default": "mdi:wind-turbine" },
-      "solar": { "default": "mdi:solar-power-variant" },
-      "hydro": { "default": "mdi:hydro-power" },
-      "bioenergy": { "default": "mdi:sprout" },
-      "pumped_storage": { "default": "mdi:pump" },
-      "physical_exchanges": { "default": "mdi:swap-horizontal" },
-      "co2_intensity": { "default": "mdi:molecule-co2" },
-      "co2_intensity_percentile": { "default": "mdi:chart-bell-curve-cumulative" },
-      "gas": { "default": "mdi:fire" },
-      "coal": { "default": "mdi:factory" },
-      "oil": { "default": "mdi:barrel" },
-      "thermal": { "default": "mdi:factory" },
-      "low_carbon_share": { "default": "mdi:leaf" },
-      "renewable_share": { "default": "mdi:recycle" },
-      "coverage_nuclear": { "default": "mdi:atom" },
-      "coverage_wind": { "default": "mdi:wind-turbine" },
-      "coverage_solar": { "default": "mdi:solar-power-variant" },
-      "coverage_hydro": { "default": "mdi:hydro-power" },
-      "coverage_bioenergy": { "default": "mdi:sprout" },
-      "coverage_thermal": { "default": "mdi:factory" }
+      "consumption": {
+        "default": "mdi:transmission-tower"
+      },
+      "nuclear": {
+        "default": "mdi:atom"
+      },
+      "wind": {
+        "default": "mdi:wind-turbine"
+      },
+      "solar": {
+        "default": "mdi:solar-power-variant"
+      },
+      "hydro": {
+        "default": "mdi:hydro-power"
+      },
+      "bioenergy": {
+        "default": "mdi:sprout"
+      },
+      "pumped_storage": {
+        "default": "mdi:pump"
+      },
+      "physical_exchanges": {
+        "default": "mdi:swap-horizontal"
+      },
+      "co2_intensity": {
+        "default": "mdi:molecule-co2"
+      },
+      "co2_intensity_percentile": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "gas": {
+        "default": "mdi:fire"
+      },
+      "coal": {
+        "default": "mdi:factory"
+      },
+      "oil": {
+        "default": "mdi:barrel"
+      },
+      "thermal": {
+        "default": "mdi:factory"
+      },
+      "low_carbon_share": {
+        "default": "mdi:leaf"
+      },
+      "renewable_share": {
+        "default": "mdi:recycle"
+      },
+      "coverage_nuclear": {
+        "default": "mdi:atom"
+      },
+      "coverage_wind": {
+        "default": "mdi:wind-turbine"
+      },
+      "coverage_solar": {
+        "default": "mdi:solar-power-variant"
+      },
+      "coverage_hydro": {
+        "default": "mdi:hydro-power"
+      },
+      "coverage_bioenergy": {
+        "default": "mdi:sprout"
+      },
+      "coverage_thermal": {
+        "default": "mdi:factory"
+      },
+      "consumption_peak_today": {
+        "default": "mdi:chart-bell-curve"
+      },
+      "consumption_peak_tomorrow": {
+        "default": "mdi:chart-bell-curve"
+      },
+      "typical_cleanest_hour": {
+        "default": "mdi:clock-star-four-points"
+      }
     }
   }
 }

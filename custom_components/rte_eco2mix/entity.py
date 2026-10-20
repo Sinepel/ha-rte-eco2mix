@@ -6,16 +6,18 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION, DOMAIN, perimeter_name
-from .coordinator import Eco2mixCoordinator
+from .coordinator import Eco2mixCoordinator, Eco2mixForecastCoordinator
 
 
-class Eco2mixEntity(CoordinatorEntity[Eco2mixCoordinator]):
+class Eco2mixEntity[CoordinatorT: (Eco2mixCoordinator, Eco2mixForecastCoordinator)](
+    CoordinatorEntity[CoordinatorT]
+):
     """An entity bound to one éCO2mix perimeter (France or a region)."""
 
     _attr_attribution = ATTRIBUTION
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: Eco2mixCoordinator, key: str) -> None:
+    def __init__(self, coordinator: CoordinatorT, key: str) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
         perimeter = coordinator.perimeter
