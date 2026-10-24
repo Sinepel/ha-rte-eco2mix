@@ -1,6 +1,6 @@
 # RTE éCO2mix for Home Assistant
 
-[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://hacs.xyz/)
 [![Validate](https://github.com/Sinepel/ha-rte-eco2mix/actions/workflows/validate.yml/badge.svg)](https://github.com/Sinepel/ha-rte-eco2mix/actions/workflows/validate.yml)
 [![Tests](https://github.com/Sinepel/ha-rte-eco2mix/actions/workflows/tests.yml/badge.svg)](https://github.com/Sinepel/ha-rte-eco2mix/actions/workflows/tests.yml)
 
@@ -27,8 +27,10 @@ Its main purpose is to help you **run appliances when electricity is low-carbon*
 
 ### HACS
 
-1. In HACS, open the menu ⋮ → **Custom repositories**, add `https://github.com/Sinepel/ha-rte-eco2mix` as an **Integration**.
-2. Download **RTE éCO2mix** and restart Home Assistant.
+RTE éCO2mix is available in the default HACS store:
+
+1. In HACS, search for **RTE éCO2mix**, or use the button below.
+2. Download it and restart Home Assistant.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Sinepel&repository=ha-rte-eco2mix&category=integration)
 
@@ -113,7 +115,7 @@ Données en temps réel de l'électricité française (RTE éCO2mix) : **taux de
 
 Objectif principal : **lancer vos appareils quand l'électricité est bas carbone**. S'y ajoutent les prévisions RTE du pic de consommation (aujourd'hui et demain) et l'« heure typiquement la plus propre » (moyenne horaire des 7 derniers jours : une tendance, pas une prévision). Le capteur binaire « Électricité bas carbone » (seuil réglable) et le « Centile du taux de CO2 sur 24 h » (0 % = moment le plus propre des dernières 24 h) servent de déclencheurs pour vos automatisations : lave-linge, lave-vaisselle, recharge de voiture…
 
-Installation : HACS → ⋮ → Dépôts personnalisés → `https://github.com/Sinepel/ha-rte-eco2mix` (Intégration), puis **Paramètres → Appareils et services → Ajouter une intégration → RTE éCO2mix**. Ajoutez la France pour le taux de CO2, et votre région si vous le souhaitez. Aucune clé d'API, mise à jour toutes les 15 minutes.
+Installation : recherchez **RTE éCO2mix** dans HACS, téléchargez-la et redémarrez Home Assistant, puis **Paramètres → Appareils et services → Ajouter une intégration → RTE éCO2mix**. Ajoutez la France pour le taux de CO2, et votre région si vous le souhaitez. Aucune clé d'API, mise à jour toutes les 15 minutes.
 
 ## License
 
